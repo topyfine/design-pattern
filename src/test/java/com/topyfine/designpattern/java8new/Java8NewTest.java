@@ -2,8 +2,8 @@ package com.topyfine.designpattern.java8new;
 
 import org.junit.Test;
 
-import java.util.IntSummaryStatistics;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,5 +34,19 @@ public class Java8NewTest {
                 .collect(Collectors.summarizingInt(Integer::intValue));
         System.out.println(summaryStatistics.getAverage() + " -|--|- " + summaryStatistics.getCount()
                 + " -|--|- " + summaryStatistics.getSum());
+        // map key重复时，映射值使用默认策略：抛出illegalStateException
+        /*Map<String, Locale> localeMap = Stream.of(Locale.getAvailableLocales())
+                .collect(Collectors.toMap(Locale::getCountry, Function.identity()));*/
+        // map key重复时，映射值使用custom lamda
+        Map<String, Locale> localeMap2 = Stream.of(Locale.getAvailableLocales())
+                .collect(Collectors.toMap(Locale::getCountry, Function.identity(), (origin, newVal) -> {
+                    System.out.println(origin + " --> " + newVal);
+                    return newVal;
+                }));
+        TreeMap<String, Locale> treeMap = Stream.of(Locale.getAvailableLocales())
+                .collect(Collectors.toMap(Locale::getCountry, Function.identity(), (origin, newVal) -> {
+//                    System.out.println(origin + "," + newVal);
+                    return newVal;
+                }, TreeMap::new));
     }
 }
